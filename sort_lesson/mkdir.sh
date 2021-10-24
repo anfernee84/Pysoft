@@ -1,11 +1,11 @@
 #!/bin/bash
 # File will create dirs and files {docx, xlsx} with some size
 FILE_SIZE=1
-for i in {1..3}
+for i in {1..2}
 do
     echo $i
     mkdir "test$i"
-    for j in {1..300}
+    for j in {1..100}
     do
         head -c ${FILE_SIZE}M </dev/urandom > test$i/file-docx-$j.docx
         head -c ${FILE_SIZE}M </dev/urandom > test$i/file-xlsx-$j.xlsx

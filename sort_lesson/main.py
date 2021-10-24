@@ -2,6 +2,8 @@ import sys
 import os
 from time import time
 from concurrent.futures import ThreadPoolExecutor
+from sort import del_empty_folders
+from pathlib import Path
 
 def main (path):
     os.system (f"python sort.py {path}")
@@ -15,3 +17,6 @@ with ThreadPoolExecutor(len (file_paths)) as executor:
 #     main (path)
 x2 = time ()
 print (x2 - x1)
+
+path = Path()
+del_empty_folders(path)
