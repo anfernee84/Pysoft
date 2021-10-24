@@ -61,14 +61,11 @@ def handle_file(root_path, file_path: Path):
 def sort_folder_command(file_path):
     reg_ext = parse_folder(file_path)
     for item in reg_ext.values():
-        try:
-            for file in item:
-                try: 
-                    handle_file(Path(file_path), file)
-                except FileNotFoundError:
-                    continue
-        except FileNotFoundError:
-            continue
+        for file in item:
+            try: 
+                handle_file(Path(file_path), file)
+            except FileNotFoundError:
+                continue
 
 
 def delfolder(path: Path):
