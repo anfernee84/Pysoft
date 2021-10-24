@@ -2,7 +2,7 @@ import sys
 import os
 from time import time
 from concurrent.futures import ThreadPoolExecutor
-from sort import del_empty_folders
+from sort import delfolder
 from pathlib import Path
 
 def main (path):
@@ -19,4 +19,4 @@ x2 = time ()
 print (x2 - x1)
 
 path = Path()
-del_empty_folders(path)
+delfolder(path)

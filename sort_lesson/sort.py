@@ -34,8 +34,6 @@ def parse_folder(path: Path):
             ext = folder_item.suffix[1:]
             if ext.upper() in REGISTERED_EXT.keys():
                 REGISTERED_EXT[ext.upper()].append(folder_item)
-            # else:
-            #     REGISTERED_EXT['OTHER'].append(folder_item)
     return REGISTERED_EXT
 
 
@@ -59,11 +57,6 @@ def handle_file(root_path, file_path: Path):
     file_path.replace(type_folder / file_path.name)
 
 
-def del_empty_folders(path: Path):
-    for folder in path.iterdir():
-        if folder.name not in ['IMAGES', 'DOC', 'ARCH', 'OTHER', 'VIDEOS', 'MUSIC'] and folder.is_dir():
-            shutil.rmtree(folder)
-
 
 def sort_folder_command(file_path):
     reg_ext = parse_folder(file_path)
@@ -76,8 +69,12 @@ def sort_folder_command(file_path):
                     continue
         except FileNotFoundError:
             continue
-    # del_empty_folders(file_path)
 
+
+def delfolder(path: Path):
+    for folder in path.iterdir():
+        if folder.name not in ['IMAGES', 'DOC', 'ARCH', 'OTHER', 'VIDEOS', 'MUSIC'] and folder.is_dir():
+            shutil.rmtree(folder)
 
 if __name__ == '__main__':
     path = Path()
