@@ -1,6 +1,7 @@
 from pathlib import Path
+from aiopath import AsyncPath, AsyncPurePath
 import shutil
-
+import asyncio 
 
 DOC_DOC = []
 DOCX_DOC = []
@@ -24,8 +25,9 @@ REGISTERED_EXT = {
 }
 
 
-def parse_folder(path: Path):
-    for folder_item in path.iterdir():
+
+async def parse_folder(path: AsyncPath):
+    for folder_item in await path.iterdir():
         if folder_item.is_dir():
             if folder_item.name not in ['IMAGES', 'VIDEOS', 'DOC', 'OTHER', 'MUSIC', 'ARCH']:
                 parse_folder(folder_item)
@@ -37,8 +39,8 @@ def parse_folder(path: Path):
     return REGISTERED_EXT
 
 
-def handle_file(root_path, file_path: Path):
-    ext = file_path.suffix[1:].upper()
+async def handle_file(root_path, file_path: AsyncPath):
+    ext = await file_path.suffix[1:].upper()
     if ext in ['JPG', 'SVG', 'PNG', 'JPEG']:
         category_folder = root_path / 'IMAGES'
     elif ext in ['DOC', 'DOCX', 'PPTX', 'PDF', 'XLSX']:
@@ -58,21 +60,30 @@ def handle_file(root_path, file_path: Path):
 
 
 
-def sort_folder_command(file_path):
-    reg_ext = parse_folder(file_path)
+# async def sort_folder_command(file_path):
+#     reg_ext = parse_folder(file_path)
+#     for item in reg_ext.values():
+#         for file in item:
+#             try: 
+#                 handle_file(AsyncPath(file_path), file)
+#             except FileNotFoundError:
+#                 continue
+
+async def sort_folder_command(file_path):
+    reg_ext = await parse_folder(file_path)
     for item in reg_ext.values():
         for file in item:
             try: 
-                handle_file(Path(file_path), file)
+                await handle_file(AsyncPath(file_path), file)
             except FileNotFoundError:
                 continue
 
-
-def delfolder(path: Path):
+async def delfolder(path: AsyncPath):
     for folder in path.iterdir():
         if folder.name not in ['IMAGES', 'DOC', 'ARCH', 'OTHER', 'VIDEOS', 'MUSIC'] and folder.is_dir():
             shutil.rmtree(folder)
 
 if __name__ == '__main__':
-    path = Path()
+    path = AsyncPath()
+    print (path)
     sort_folder_command(path)
