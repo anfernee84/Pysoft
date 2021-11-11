@@ -166,30 +166,240 @@
 
 
 import psycopg2
-from psycopg2 import Error
+from psycopg2 import Error,DatabaseError, connect
+from psycopg2.extensions import ISOLATION_LEVEL_AUTOCOMMIT
 
-try:
-    connection = psycopg2.connect(
-        user = "postgres",
-        password = "password",
-        host = "10.0.17.42",
-        port = "5432",
-        database = "UserDB")
+
+# try:
+#     connection = psycopg2.connect(
+#         user = "postgres",
+#         password = "password",
+#         host = "10.0.17.42",
+#         port = "5432",
+#         database = "UserDB")
     
-    cursor = connection.cursor()
+#     cursor = connection.cursor()
 
-    print ("Information about PostgreSQL")
-    print(connection.get_dsn_parameters(), "\n")
+#     print ("Information about PostgreSQL")
+#     print(connection.get_dsn_parameters(), "\n")
 
-    cursor.execute("SELECT version();")
-    record = cursor.fetchone()
-    print(f"You`re connected to {record}", "\n")
+#     cursor.execute("SELECT version();")
+#     record = cursor.fetchone()
+#     print(f"You`re connected to {record}", "\n")
 
-except (Exception, Error) as error:
-    print ("Error", error)
-finally:
-    if connection:
+# except (Exception, Error) as error:
+#     print ("Error", error)
+# finally:
+#     if connection:
+#         cursor.close()
+#         connection.close()
+#         print("connection closed")
+
+
+# def create_db():
+#     try:
+#         connection = psycopg2.connect(
+
+#             user = "postgres",
+#             password = "password",
+#             host = "10.0.17.42",
+#             port = "5432",)
+
+#         connection.set_isolation_level(ISOLATION_LEVEL_AUTOCOMMIT)
+#         cursor = connection.cursor()
+#         create_database = "CREATE DATABASE goit_db"
+#         cursor.execute(create_database)
+#         print ("DB has been created")
+#     except (Exception, Error) as error:
+#         print ("Error", error)
+#     finally:
+#         cursor.close()
+#         connection.close()
+#         print("connection closed")
+
+
+
+# if __name__ == "__main__":
+#     create_db()
+
+
+# try:
+#     connection = psycopg2.connect(
+#         user = "postgres",
+#         password = "password",
+#         host = "10.0.17.42",
+#         port = "5432",
+#         database = "UserDB"
+#         )
+#     cursor = connection.cursor()
+#     select_query = "select * from contacts where favorite = 'true'"
+#     cursor.execute(select_query)
+#     print ("Taking all records", "\n")
+#     records = cursor.fetchall()
+
+#     print ("Print each record", "\n")
+#     for row in records:
+#         print ("Phone", row[3], "\n")
+#         print ("Email", row[2], "\n")
+    
+# except (Exception, Error) as error:
+#         print ("Error", error)
+# finally:
+#         cursor.close()
+#         connection.close()
+#         print("connection closed")
+
+# try:
+#     connection = psycopg2.connect(
+#         user = "postgres",
+#         password = "password",
+#         host = "10.0.17.42",
+#         port = "5432",
+#         database = "UserDB"
+#         )
+#     cursor = connection.cursor()
+#     select_query = "select * from users"
+#     cursor.execute(select_query)
+#     user_query_first = cursor.fetchmany(3)
+#     print ("Selecting two rows", "\n"*2)
+#     for row in user_query_first:
+#         print ("Email: ", row[2], "\n")
+#         print ("Age: ", row[4], "\n")
+#         print ("Date of creation: ", row[6], "\n"*2)
+
+# except (Exception, Error) as error:
+#         print ("Error", error)
+# finally:
+#         cursor.close()
+#         connection.close()
+#         print("connection closed")
+
+def create_db():
+    try:
+        connection = psycopg2.connect(
+
+            user = "postgres",
+            password = "password",
+            host = "10.0.17.42",
+            port = "5432",)
+
+        connection.set_isolation_level(ISOLATION_LEVEL_AUTOCOMMIT)
+        cursor = connection.cursor()
+        create_database = "CREATE DATABASE phone_db"
+        cursor.execute(create_database)
+        print ("DB has been created")
+    except (Exception, Error) as error:
+        print ("Error", error)
+    finally:
         cursor.close()
         connection.close()
-        print()
+        print("connection closed")
+
+
+def insert_to_db():
+    try:
+        connection = psycopg2.connect(
+
+            user = "postgres",
+            password = "password",
+            host = "10.0.17.42",
+            port = "5432",
+            database = "phone_db")
+        cursor = connection.cursor()
+        create_query = '''CREATE TABLE phone
+                          (ID INT PRIMARY KEY     NOT NULL,
+                          MODEL           TEXT    NOT NULL,
+                          PRICE         INT   NOT NULL); '''
+
+        cursor.execute(create_query)
+        connection.commit()
+        print("Successfully created table Phone at PostgreSQL")
+        insert_query = """ INSERT INTO phone (ID, MODEL, PRICE)
+                                           VALUES (%s,%s,%s)"""
+        record_to_insert = (1, 'Iphone X', 950)
+        cursor.execute(insert_query, record_to_insert)
+
+        connection.commit()
+        count = cursor.rowcount
+        print(count, f"Record successfully added to table Phone")
+    
+    except (Exception, Error) as error:
+        print ("Error", error)
+    finally:
+        cursor.close()
+        connection.close()
+        print("connection closed")    
+
+def update_table(mobile_id, price):
+    try:
+        connection = psycopg2.connect(
+
+            user = "postgres",
+            password = "password",
+            host = "10.0.17.42",
+            port = "5432",
+            database = "phone_db")
+        cursor = connection.cursor()
+        print("Table before update")
+        select_query = """select * from phone where id = %s"""
+        cursor.execute(select_query, (mobile_id,))
+        record = cursor.fetchone()
+        print(record)
+
+        update_query = "UPDATE phone SET price = %s where id = %s"
+        cursor.execute(update_query, (price, mobile_id,))
+        connection.commit()
+        count = cursor.rowcount
+        print("Record has been updated", count)
+
+        print("Table after update")
+        cursor.execute(select_query, (mobile_id,))
+        record = cursor.fetchone()
+        print(record)
+
+    except (Exception, Error) as error:
+        print ("Error", error)
+    finally:
+        if connection:
+            cursor.close()
+            connection.close()
+            print("connection closed")
+
+
+def delete_data(mobile_id):
+    try:
+        connection = psycopg2.connect(
+
+            user = "postgres",
+            password = "password",
+            host = "10.0.17.42",
+            port = "5432",
+            database = "phone_db")
+        cursor = connection.cursor()
+        delete_query = """DELETE FROM phone where ID = %s"""
+        cursor.execute(delete_query, (mobile_id,))
+        connection.commit()
+        count = cursor.rowcount
+        print(f"Record has been deleted {count}")
+
+    except (Exception, Error) as error:
+        print ("Error", error)
+    finally:
+        if connection:
+            cursor.close()
+            connection.close()
+            print("connection closed")
+
+def delete_table():
+    with psycopg2.connect(user = "postgres", password = "password", host = "10.0.17.42", port = "5432", database = "phone_db") as connector:
+        with connector.cursor() as cursor:
+            cursor.execute ("DROP table phone")
+    print("table has been deleted")
+
+if __name__ == "__main__":
+    create_db()
+    insert_to_db()
+    update_table(1,567)
+    delete_data(1)
+    delete_table()
 

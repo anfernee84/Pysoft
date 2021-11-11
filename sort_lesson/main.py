@@ -5,6 +5,7 @@ from concurrent.futures import ThreadPoolExecutor
 from sort import delfolder
 from pathlib import Path
 
+
 def main (path):
     os.system (f'python sort.py {path}')
 
@@ -19,4 +20,4 @@ x2 = time ()
 print (x2 - x1)
 
 path = Path()
-delfolder(path)
+# delfolder(path)

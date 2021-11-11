@@ -1,5 +1,9 @@
+import asyncio
+from aiopath import AsyncPath
 from pathlib import Path
 import shutil
+import sys
+from pprint import pprint
 
 
 DOC_DOC = []
@@ -24,20 +28,22 @@ REGISTERED_EXT = {
 }
 
 
-def parse_folder(path: Path):
-    for folder_item in path.iterdir():
-        if folder_item.is_dir():
+async def parse_folder(path: Path):
+    path = AsyncPath(path)
+    async for folder_item in path.iterdir():
+        is_folder = await folder_item.is_dir()
+        if is_folder:
             if folder_item.name not in ['IMAGES', 'VIDEOS', 'DOC', 'OTHER', 'MUSIC', 'ARCH']:
-                parse_folder(folder_item)
+                await parse_folder(folder_item)
                 continue
         else:
             ext = folder_item.suffix[1:]
             if ext.upper() in REGISTERED_EXT.keys():
                 REGISTERED_EXT[ext.upper()].append(folder_item)
-    return REGISTERED_EXT
+    # return REGISTERED_EXT
 
 
-def handle_file(root_path, file_path: Path):
+async def handle_file(root_path, file_path: Path):
     ext = file_path.suffix[1:].upper()
     if ext in ['JPG', 'SVG', 'PNG', 'JPEG']:
         category_folder = root_path / 'IMAGES'
@@ -54,25 +60,40 @@ def handle_file(root_path, file_path: Path):
     category_folder.mkdir(exist_ok=True)
     type_folder = category_folder / ext
     type_folder.mkdir(exist_ok=True)
-    file_path.replace(type_folder / file_path.name)
+    await file_path.replace(type_folder / file_path.name)
 
 
 
-def sort_folder_command(file_path):
-    reg_ext = parse_folder(file_path)
-    for item in reg_ext.values():
-        for file in item:
-            try: 
-                handle_file(Path(file_path), file)
-            except FileNotFoundError:
-                continue
+async def sort_folder_command(file_path):
+    # await parse_folder(file_path)
+    async for item in REGISTERED_EXT.values():
+        print (item)
+        # async for file in item:
+            # try: 
+            #     await handle_file(Path(file_path), file)
+            # except FileNotFoundError:
+            #     continue
 
 
-def delfolder(path: Path):
-    for folder in path.iterdir():
+async def delfolder(path: Path):
+    async for folder in path.iterdir():
         if folder.name not in ['IMAGES', 'DOC', 'ARCH', 'OTHER', 'VIDEOS', 'MUSIC'] and folder.is_dir():
             shutil.rmtree(folder)
 
+async def main (path):
+    await parse_folder (path)
+
+    for items in REGISTERED_EXT.values ():
+        # await handle_file (path, item)
+        for item in items:
+            await handle_file (path, item)
+
+
+
 if __name__ == '__main__':
-    path = Path()
-    sort_folder_command(path)
+    # path = Path()
+    path = sys.argv[1]
+    sort_folder = Path (path)
+    asyncio.run (main (sort_folder.resolve ()))
+    # sort_folder_command(path)
+    
