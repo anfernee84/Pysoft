@@ -1,0 +1,193 @@
+Реализовать схему базу данных, которая содержит:
+
+Перечень студентов.
+Перечень групп.
+Перечень предметов с указанием преподавателя, который читает предмет. У каждого студента есть оценки по предметам с указанием когда оценка получена.
+Создать базу данных и заполнить случайными данными (~30 студентов, 3 группы, 5 предметов, 3 преподавателя, по 20 оценок у каждого студента по всем предметам).
+
+Сделать следующие выборки из базы:
+
+
+===========================================================================================
+5 СТУДЕНТОВ С НАИБОЛЬШИМ СРЕДНИМ БАЛЛОМ ПО ВСЕМ ПРЕДМЕТАМ.
+
+select grades.student_id, avg(grade) as avg_grade, student_name
+from grades join students
+	on grades.student_id=students.student_id
+group by grades.student_id, student_name
+order by avg_grade desc
+limit 5
+============================================================================================
+
+1 СТУДЕНТ С НАИВЫСШИМ СРЕДНИМ БАЛЛОМ ПО ОДНОМУ ПРЕДМЕТУ.
+
+select grades.student_id, avg(grade) as avg_grade, student_name, courses_name
+from grades join students
+	on grades.student_id=students.student_id 
+		join groups
+	on groups.group_id=students.group_id
+		join tutors
+	on tutors.group_id=groups.group_id
+		join courses
+	on courses.tutor_id=tutors.tutor_id
+	
+where courses_name = 'Biology'
+	
+group by grades.student_id, student_name, courses_name
+order by avg_grade desc
+limit 1
+============================================================================================
+
+СРЕДНИЙ БАЛЛ В ГРУППЕ ПО ОДНОМУ ПРЕДМЕТУ.
+
+select grades.student_id, avg(grade) as avg_grade, student_name, group_name
+from grades join students
+	on grades.student_id=students.student_id 
+		join groups
+	on groups.group_id=students.group_id
+		join tutors
+	on tutors.group_id=groups.group_id
+		join courses
+	on courses.tutor_id=tutors.tutor_id
+	
+where group_name = 'Lazy cows'
+	
+group by grades.student_id, student_name, group_name
+limit 1
+============================================================================================
+
+
+СРЕДНИЙ БАЛЛ В ПОТОКЕ.
+
+select  AVG(grade) as grade 
+		 	from grades
+			
+============================================================================================			
+КАКИЕ КУРСЫ ЧИТАЕТ ПРЕПОДАВАТЕЛЬ.
+
+select tutor_name, courses_name
+from tutors join courses
+	on courses.tutor_id = tutors.tutor_id
+where tutor_name = 'Valeriy Albertovich'
+
+
+============================================================================================
+
+СПИСОК СТУДЕНТОВ В ГРУППЕ.
+
+select student_name, group_name
+from students join groups
+	on students.group_id = groups.group_id
+where group_name = 'Lazy cows'
+
+
+============================================================================================
+ОЦЕНКИ СТУДЕНТОВ В ГРУППЕ ПО ПРЕДМЕТУ.
+
+select student_name, group_name, grade, courses_name
+
+from students 
+	join grades
+		on grades.student_id = students.student_id			
+	join groups
+		on students.group_id = groups.group_id
+	join tutors
+		on tutors.group_id = groups.group_id
+	join courses
+		on courses.tutor_id = tutors.tutor_id
+
+where group_name = 'Inglorious bastards' and courses_name = 'History'
+============================================================================================
+ОЦЕНКИ СТУДЕНТОВ В ГРУППЕ ПО ПРЕДМЕТУ НА ПОСЛЕДНЕМ ЗАНЯТИИ.
+
+select s.student_id, student_name, group_name, grade, courses_name, max(grade_date) as grade_date
+
+from students as s
+	join grades
+		on grades.student_id = s.student_id			
+	join groups
+		on s.group_id = groups.group_id
+	join tutors
+		on tutors.group_id = groups.group_id
+	join courses
+		on courses.tutor_id = tutors.tutor_id
+
+where group_name = 'Lazy cows' and courses_name = 'Drinkology' 
+group by student_name, group_name, grade, courses_name, s.student_id
+order by grade_date desc
+============================================================================================
+СПИСОК КУРСОВ, КОТОРЫЕ ПОСЕЩАЕТ СТУДЕНТ.
+
+select s.student_id, student_name, group_name, courses_name
+
+from students as s
+		
+	join groups
+		on s.group_id = groups.group_id
+	join tutors
+		on tutors.group_id = groups.group_id
+	join courses
+		on courses.tutor_id = tutors.tutor_id
+
+where student_name = 'Madison Kidd'
+============================================================================================
+СПИСОК КУРСОВ, КОТОРЫЕ СТУДЕНТУ ЧИТАЕТ ПРЕПОДАВАТЕЛЬ.
+
+select courses_name, tutor_name
+from courses join tutors
+	on tutors.tutor_id=courses.courses_id
+		join groups
+	on groups.group_id=tutors.group_id
+		join students
+	on students.group_id=groups.group_id
+where student_name = 'Madison Kidd'
+============================================================================================
+СРЕДНИЙ БАЛЛ, КОТОРЫЙ ПРЕПОДАВАТЕЛЬ СТАВИТ СТУДЕНТУ.
+
+select tutor_name, avg(grade)
+from groups join tutors 
+	on tutors.group_id=groups.group_id
+		join students as s
+	on s.group_id=groups.group_id
+		join grades
+	on grades.student_id=s.student_id
+where student_name = 'Madison Kidd'
+group by  tutor_name
+
+============================================================================================
+СРЕДНИЙ БАЛЛ, КОТОРЫЙ ПРЕПОДОВАТЕЛЬ СТАВИТ КАЖОМУ СТУДЕНТУ
+
+select student_name, avg(grade)
+from groups join tutors 
+	on tutors.group_id=groups.group_id
+		join students as s
+	on s.group_id=groups.group_id
+		join grades
+	on grades.student_id=s.student_id
+group by  student_name
+============================================================================================
+СРЕДИНЙ БАЛЛ, КОТОРЫЙ КОНКРЕТНЫЙ ПРЕПОДАВАТЕЛЬ СТАВИТ КАЖДОМУ СВОЕМУ СТУДЕНТУ
+
+select student_name, avg(grade)
+from groups join tutors 
+	on tutors.group_id=groups.group_id
+		join students as s
+	on s.group_id=groups.group_id
+		join grades
+	on grades.student_id=s.student_id
+where tutor_name = 'Aristarkh Bastardovich'
+group by  student_name
+============================================================================================
+СРЕДНИЙ БАЛЛ, КОТОРЫЙ СТАВИТ ПРЕПОДАВАТЕЛЬ.
+
+select tutor_name, avg(grade)
+from groups join tutors 
+	on tutors.group_id=groups.group_id
+		join students as s
+	on s.group_id=groups.group_id
+		join grades
+	on grades.student_id=s.student_id
+where tutor_name = 'Aristarkh Bastardovich'
+group by  tutor_name
+============================================================================================
+
