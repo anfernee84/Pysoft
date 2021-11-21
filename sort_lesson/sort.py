@@ -27,7 +27,6 @@ REGISTERED_EXT = {
     'OTHER': OTHER
 }
 
-
 async def parse_folder(path: Path):
     path = AsyncPath(path)
     async for folder_item in path.iterdir():
