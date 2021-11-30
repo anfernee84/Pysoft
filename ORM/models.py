@@ -1,4 +1,6 @@
+from os import name
 from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.log import instance_logger
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy import Column, Date, Boolean, ForeignKey, String, Text, Table, create_engine, Integer
 from sqlalchemy.orm import relationship, backref
@@ -9,7 +11,9 @@ Session = sessionmaker(bind=engine)
 Base = declarative_base()
 
 
-students_course_association = Table ("course_")
+students_course_association = Table ("course_student", Base.metadata,
+                            Column("course_id", Integer, ForeignKey("course.id")),
+                            Column("students_id", Integer, ForeignKey("student.id")))
 
 
 class Student(Base):
@@ -31,11 +35,15 @@ class Student(Base):
     
 
 class Course(Base):
-    __tablename = "course"
+    __tablename__ = "course"
 
     id = Column(Integer, primary_key=True)
     name = Column(String)
     description = Column(Text)
+    student = relationship("Student", secondary= students_course_association)
 
-    def __init__ 
+    def __init__(self, name, description):
+        self.name = name
+        self.description = description 
 
+class Teacher(Base)
