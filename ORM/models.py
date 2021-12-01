@@ -1,10 +1,9 @@
-from os import name
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.log import instance_logger
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy import Column, Date, Boolean, ForeignKey, String, Text, Table, create_engine, Integer
 from sqlalchemy.orm import relationship, backref
-from sqlalchemy.sql.expression import column, true
+
 
 engine = create_engine("postgresql+psycopg2://postgres:password@10.0.17.42:5432/students")
 Session = sessionmaker(bind=engine)
