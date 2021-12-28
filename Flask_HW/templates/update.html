@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Change Contact</title>
+			<style type="text/css">
+				h2{
+					
+					text-align:center;
+					font-size:20px;
+					}
+				h2{
+					color:rgb(255, 174, 0);
+					padding:0.5%;
+					background-color: darkblue;
+					}
+					
+				head,body{
+					background-color:rgba(212, 212, 199, 0.815);
+					margin:3%;
+					}
+				form{text-align:center;
+					font-size:20px;
+						}
+					.div_in_form {
+						position: relative;
+						margin: 0 auto;
+						text-align: right;
+						display: inline-block;
+					}
+					.div_in_form > label {
+						display: block;
+						margin: 5px 10px;
+					}
+				input{padding:8px;}
+				
+			</style>
+	</head>
+<body>
+<h2>Contact Information</h2>
+	<form action = "/updatedetails" method="post">   
+		<div class="div_in_form">
+			<label>UserID : <input type="number" name="userid" placeholder="Enter № of user"></label>
+			<label>First name : <input type="name" name="firstname" placeholder="Enter First name"></label>
+			<label>Mobile number : <input type="number" name="mnumber" placeholder="Enter mobile number"></label>
+			<label>E-mail : <input type="email" name="mail" placeholder="Enter E-mail"></label>
+		</div>
+		<div class="div_in_form">
+			<label>Last name : <input type="name" name="lastname" placeholder="Enter Last name"></label>
+			<label>Room number : <input type="number" name="onumber" placeholder="Enter office room number"></label>
+			<label>User address : <input type="text" name="address" placeholder="Enter address"></label>
+		</div>
+		<br><br><input type="submit" value="Submit">
+		
+	</form>
+
+<a href="/"><p style="text-align:center"> Go back to home page</a>
+</body>
+</html> 
