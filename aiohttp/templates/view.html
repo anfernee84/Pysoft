@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>List of records</title>
+			<style type="text/css">
+				h3{
+					color:rgb(13, 16, 71);
+					padding:0.5%;
+					background-color: rgb(192, 173, 63);
+					text-align:center;
+					font-size:18px;
+					}
+				body{
+					text-align:center;
+					
+					}
+				head,body{
+					background-color:rgba(191, 241, 176, 0.815);
+					margin:2%;
+					}
+				table{ 
+					border:2px solid black;
+					margin-left:auto;
+					margin-right:auto;
+					font-size:16px;	 
+					}
+				table td{
+					border: 0.5px solid rgb(214, 154, 23);
+					}
+				table th{
+					border: 0.5px solid rgb(29, 98, 202);
+					}
+			</style>
+	</head>
+<body>
+<h3>Site Details</h3>   
+	<table>
+		<thead><tr>
+			<th>Number of record</th>
+			<th>Site URL</th>
+			<th>Site response time</th>
+			<th>Site response</th>   
+			<th>Content type</th>
+			<th>Date on server</th>
+			<th>Web server type</th>
+			<th>Cookie settings</th></tr>
+		</thead>
+	<tbody>
+{% for row in rows %}
+<tr>
+	<td>{{row["Recid"]}}</td>
+	<td>{{row["URL"]}}</td>
+	<td>{{row["TimeResponse"]}}</td>
+	<td>{{row["SiteResponse"]}}</td>
+	<td>{{row["ConType"]}}</td>
+	<td>{{row["SrvDate"]}}</td>
+	<td>{{row["WebSrv"]}}</td>
+	<td>{{row["Csettings"]}}</td>
+</tr></tbody>
+{% endfor %}   
+</table>
+<br><br>
+<a href="/">Refresh data</a>
+</body>
+</html> 
