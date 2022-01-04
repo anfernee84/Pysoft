@@ -1,8 +1,10 @@
 import asyncio
+from time import time
 from timeit import default_timer
 from aiohttp import ClientSession
 import requests
 import sqlite3
+from datetime import datetime
 
 
 def fetch_async(urls):
@@ -25,10 +27,9 @@ async def fetch_all(urls):
         _ = await asyncio.gather(*tasks) 
 
 async def fetch(url, session):
-    fetch.start_time[url] = default_timer()
+    # fetch.start_time[url] = default_timer()
     async with session.get(url) as response:
-        connection = sqlite3.connect("collected_data.db")
-        c = connection.cursor()
+        fetch.start_time[url] = default_timer()
         r = await response.read()
         elapsed = default_timer() - fetch.start_time[url]
         rtime = url  + 'response time = ' + str(elapsed) + " mseconds"
@@ -42,6 +43,7 @@ async def fetch(url, session):
             cursor = connection.cursor()
             cursor.execute("""insert into parsedata (URL,TimeResponse,SiteResponse,ConType,SrvDate,WebSrv,Csettings) values(?,?,?,?,?,?,?);""",(url,elapsed,status,ctype,sdate,wsrv,scookie))
             connection.commit()
+
         return r
 
 
