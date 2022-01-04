@@ -2,9 +2,7 @@ import asyncio
 from time import time
 from timeit import default_timer
 from aiohttp import ClientSession
-import requests
 import sqlite3
-from datetime import datetime
 
 
 def fetch_async(urls):
