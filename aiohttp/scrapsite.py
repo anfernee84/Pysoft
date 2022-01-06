@@ -36,7 +36,7 @@ async def fetch(url, session):
         sdate = response.headers['date']
         wsrv = response.headers['Server']
         scookie = response.headers["Set-Cookie"]
-        # print (f'{rtime} \nStatus: {status} \nContent-type: {ctype} \nServer date: {sdate} \nWeb server: {wsrv} \nCookie settings: {scookie}' '\n')
+        print (f'{rtime} \nStatus: {status} \nContent-type: {ctype} \nServer date: {sdate} \nWeb server: {wsrv} \nCookie settings: {scookie}' '\n')
         with sqlite3.connect("collected_data.db") as connection:
             cursor = connection.cursor()
             cursor.execute("""insert into parsedata (URL,TimeResponse,SiteResponse,ConType,SrvDate,WebSrv,Csettings) values(?,?,?,?,?,?,?);""",(url,elapsed,status,ctype,sdate,wsrv,scookie))
